@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#3a6299">
+<meta name="generator" content="Hexo 8.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-31.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16.png">
+  <link rel="mask-icon" href="/images/avatar.svg" color="#3a6299">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"playgroundjerry.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#4a7eb8","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、到底什么算是记忆？在使用 Openclaw 等AI助手时，我们会感觉到它”记住”了自己的一些习惯、身份和常用指令，可以像一位熟悉我们的同事那样协作；但有时候，聊着聊着它似乎又突然忘记了某些内容，让人摸不着头脑。 那它到底记没记住呢？要回答这个问题，我们需要回归到AI神经网络对人脑的模拟机制中寻找答案。 参考人脑的研究，一种主流观点认为：长期记忆的形成依赖于神经元之间连接改变所产生的”印记”。特">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Agent的“记忆”到底怎么来？">
+<meta property="og:url" content="https://playgroundjerry.github.io/2026/02/27/Agent%E7%9A%84%E2%80%9C%E8%AE%B0%E5%BF%86%E2%80%9D%E5%88%B0%E5%BA%95%E6%80%8E%E4%B9%88%E6%9D%A5%EF%BC%9F/index.html">
+<meta property="og:site_name" content="Jerry的赛博车库">
+<meta property="og:description" content="一、到底什么算是记忆？在使用 Openclaw 等AI助手时，我们会感觉到它”记住”了自己的一些习惯、身份和常用指令，可以像一位熟悉我们的同事那样协作；但有时候，聊着聊着它似乎又突然忘记了某些内容，让人摸不着头脑。 那它到底记没记住呢？要回答这个问题，我们需要回归到AI神经网络对人脑的模拟机制中寻找答案。 参考人脑的研究，一种主流观点认为：长期记忆的形成依赖于神经元之间连接改变所产生的”印记”。特">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image.woshipm.com/2026/02/26/42f1a7cc-1301-11f1-987c-00163e09d72f.png">
+<meta property="article:published_time" content="2026-02-27T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-02-27T20:27:03.675Z">
+<meta property="article:author" content="Jerry Fan">
+<meta property="article:tag" content="agent">
+<meta property="article:tag" content="ai">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image.woshipm.com/2026/02/26/42f1a7cc-1301-11f1-987c-00163e09d72f.png">
+
+<link rel="canonical" href="https://playgroundjerry.github.io/2026/02/27/Agent%E7%9A%84%E2%80%9C%E8%AE%B0%E5%BF%86%E2%80%9D%E5%88%B0%E5%BA%95%E6%80%8E%E4%B9%88%E6%9D%A5%EF%BC%9F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Agent的“记忆”到底怎么来？ | Jerry的赛博车库</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Jerry的赛博车库</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Playground of Jerry</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://playgroundjerry.github.io/2026/02/27/Agent%E7%9A%84%E2%80%9C%E8%AE%B0%E5%BF%86%E2%80%9D%E5%88%B0%E5%BA%95%E6%80%8E%E4%B9%88%E6%9D%A5%EF%BC%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.svg">
+      <meta itemprop="name" content="Jerry Fan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jerry的赛博车库">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Agent的“记忆”到底怎么来？
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2026-02-27 10:00:00" itemprop="dateCreated datePublished" datetime="2026-02-27T10:00:00+08:00">2026-02-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2026-02-28 04:27:03" itemprop="dateModified" datetime="2026-02-28T04:27:03+08:00">2026-02-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI%E7%9B%B8%E5%85%B3/" itemprop="url" rel="index"><span itemprop="name">AI相关</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI%E7%9B%B8%E5%85%B3/%E5%8E%9F%E7%90%86%E5%88%86%E4%BA%AB/" itemprop="url" rel="index"><span itemprop="name">原理分享</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="一、到底什么算是记忆？"><a href="#一、到底什么算是记忆？" class="headerlink" title="一、到底什么算是记忆？"></a>一、到底什么算是记忆？</h2><p>在使用 Openclaw 等AI助手时，我们会感觉到它”记住”了自己的一些习惯、身份和常用指令，可以像一位熟悉我们的同事那样协作；但有时候，聊着聊着它似乎又突然忘记了某些内容，让人摸不着头脑。</p>
+<p>那它到底记没记住呢？要回答这个问题，我们需要回归到AI神经网络对人脑的模拟机制中寻找答案。</p>
+<p>参考人脑的研究，一种主流观点认为：长期记忆的形成依赖于神经元之间连接改变所产生的”印记”。特定的神经元连接模式及信号传递方式浓缩了所谓的”记忆”。当你再次回忆这些内容时，特定的神经元以特定模式被激活，产生的化学和电信号让你重现特定的记忆内容。</p>
+<p>在Agent的产品结构中，<strong>实际上只有模型本身具备这种记忆能力</strong>。模型的人工神经网络记录了海量的”参数”，这些参数相互交织，构建了从输入到输出的复杂映射关系。就像人脑回忆某段记忆一样，每次输入都会经过神经元层层的传递计算，选择性激活，最终输出特定结果。</p>
+<p>因此，如果参照人脑的记忆机制，模型在与单个用户的对话过程中，<strong>严格来说并没有能力“记住”任何新东西</strong>——模型本身的参数在使用过程中不会产生任何变化。它的”记忆”永远只包含训练数据所带来的知识。但为什么实际使用时，它确实表现得像是记住了某些信息？这些信息从何而来？</p>
+<h2 id="二、工作记忆与长期记忆"><a href="#二、工作记忆与长期记忆" class="headerlink" title="二、工作记忆与长期记忆"></a>二、工作记忆与长期记忆</h2><p>在人类认知活动中，首先形成的是短期工作记忆，比如刚读过的书页中的人名、上一行的计算结果等。这些短期记忆帮助我们持续完成任务，但会迅速遗忘；而另一部分记忆会经过”转存”机制进入长期记忆——这种记忆内容相对抽象模糊，却能持续很长时间，帮助我们形成稳定的自我认知、掌握必要技能、坚持长期目标等。</p>
+<p>尽管使用Agent时我们并未改变模型本身，但为了帮助Agent像人一样工作，工程师们实际上为其设计了类似<strong>工作记忆</strong>和<strong>长期记忆</strong>的机制。</p>
+<h3 id="工作记忆（上下文窗口）"><a href="#工作记忆（上下文窗口）" class="headerlink" title="工作记忆（上下文窗口）"></a>工作记忆（上下文窗口）</h3><p>在与Agent的对话中，虽然表面上是”你一句我一句”的交互，但实际上，每次你发送消息时，系统都会将整个历史对话一并发送给模型。因此，模型每次回复都可以参考之前的全部对话内容。只要对话未被清空且未超出模型的最大上下文限制，它就能”记得”对话中的每一个细节。</p>
+<p>然而，每个模型都有最大上下文长度限制。一旦超出这个限制，我们就不得不丢弃部分历史记录、开启新对话，或对聊天记录进行压缩处理。</p>
+<p>因此，<strong>上下文中的内容就像工作记忆</strong>——它记住了当前对话的详细信息，但一旦超出容量，这些信息就会被”遗忘”。</p>
+<p>在复杂任务（如编程）中，如果仅依赖这种机制显然是不够的（甚至可能无法完整阅读一个代码库）。因此，我们需要将上下文中的工作记忆”转存”为长期记忆。</p>
+<h3 id="长期记忆（外部知识库）"><a href="#长期记忆（外部知识库）" class="headerlink" title="长期记忆（外部知识库）"></a>长期记忆（外部知识库）</h3><p>前文已提到，模型不经过训练不可能新增记忆，那么长期记忆如何构建？目前的主流方案是提供一个<strong>外挂知识库</strong>。</p>
+<p>这就像记性不好的人把知识记在笔记本上——我们为Agent提供一个可读写的知识库。当上下文即将超限，或特定提示词触发时，Agent会将上下文中的关键内容写入知识库；当对话中需要特定知识时，通过检索机制从知识库中召回相关内容，加载到上下文中供本轮使用。</p>
+<p>这样，一些需要永久保留的信息——如对话风格、用户身份、关键知识概念等——就能被Agent”长期记住”了。</p>
+<p>但需要注意的是，记录知识时模型不可能将上下文一字不差地保存（这种机械记录也没有意义）。因此，<strong>长期记忆是对工作记忆的提取与压缩</strong>，类似于人类的长期记忆——它会变成相对抽象的形式，只保留关键信息。</p>
+<p>至此，我们可以勾勒出Agent记忆机制的完整图景：</p>
+<ul>
+<li><strong>模型参数</strong>：内化的”真正”记忆（静态知识）</li>
+<li><strong>知识库</strong>：持久但抽象的长期记忆</li>
+<li><strong>上下文</strong>：短暂但具体的工作记忆</li>
+</ul>
+<p><img src="https://image.woshipm.com/2026/02/26/42f1a7cc-1301-11f1-987c-00163e09d72f.png"></p>
+<h2 id="三、记忆紊乱：AI也会”阿尔茨海默”？"><a href="#三、记忆紊乱：AI也会”阿尔茨海默”？" class="headerlink" title="三、记忆紊乱：AI也会”阿尔茨海默”？"></a>三、记忆紊乱：AI也会”阿尔茨海默”？</h2><p>基于上述理解，Agent似乎已经具备完善的记忆机制，但在日常使用中，我们常发现它的记忆会出现紊乱：突然忘记某些内容，甚至记错信息。这些问题是如何产生的？从上述记忆结构中，我们可以找到线索。</p>
+<p><strong>问题的根源</strong>实际上来自两个方面：<strong>模型内化记忆无法实时更新</strong> + <strong>上下文长度限制</strong>。</p>
+<p>外挂知识库是我们为解决这两个问题而设计的长期记忆工具。但何时存入、存入什么、何时取出、取出什么——这些关键环节仍依赖模型的”决策”。</p>
+<p><strong>存入环节</strong>：目前的工具通常在上下文接近限制时触发压缩存储，但用户往往不知道上下文何时到达阈值。触发压缩本身就会导致上下文丢弃部分细节，这正是用户感觉Agent”突然忘记”某些内容的主要原因。</p>
+<p><strong>取出环节</strong>存在两个问题：</p>
+<ol>
+<li><strong>触发时机</strong>：由于知识库内容往往远超上下文限制，我们只能将知识库结构（或索引）提供给模型，由其判断是否需要获取信息。但模型可能更”信赖”自己的内部记忆而非外部信息，这时就会出现：即使知识库中已确认存储了某条信息，Agent仍会给出截然不同的回答。</li>
+<li><strong>召回精度</strong>：一旦决定取出，模型如何找到真正对应的知识？这通常依赖搜索算法或相关性算法（如Embedding向量检索）。召回算法可能成为瓶颈——如果召回精准度不足，Agent可能产生答非所问的情况。</li>
+</ol>
+<p><strong>优化方向</strong></p>
+<p>针对这些问题，工程实践中已有诸多优化方案：</p>
+<ul>
+<li><strong>知识库分层</strong>：将核心关键知识始终加载在上下文，解决”何时获取”的问题</li>
+<li><strong>完整日志存储</strong>：将完整聊天记录同步存入知识库，作为可检索的历史，缓解压缩时机带来的信息丢失</li>
+</ul>
+<p>但这些工程手段无法解决根本问题——Agent只是”表现得越来越像能记住信息”。或许，只有当某种新机制能够让模型在对话中直接进行训练或微调，将记忆真正内化到模型参数中时，我们才能见到真正可以”记住”你的Agent。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ai/" rel="tag"># ai</a>
+              <a href="/tags/agent/" rel="tag"># agent</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2026/01/28/AI%E4%B8%8D%E6%98%AF%E7%81%B5%E4%B8%B9%E5%A6%99%E8%8D%AF%EF%BC%8C%E6%B2%BB%E4%B8%8D%E4%BA%86%E5%A4%A7%E5%85%AC%E5%8F%B8%E7%9A%84%E2%80%9C%E6%9C%AA%E6%9D%A5%E7%84%A6%E8%99%91%E7%97%87%E2%80%9D/" rel="prev" title="AI不是灵丹妙药，治不了大公司的“未来焦虑症”">
+      <i class="fa fa-chevron-left"></i> AI不是灵丹妙药，治不了大公司的“未来焦虑症”
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%88%B0%E5%BA%95%E4%BB%80%E4%B9%88%E7%AE%97%E6%98%AF%E8%AE%B0%E5%BF%86%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">一、到底什么算是记忆？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BF%86%E4%B8%8E%E9%95%BF%E6%9C%9F%E8%AE%B0%E5%BF%86"><span class="nav-number">2.</span> <span class="nav-text">二、工作记忆与长期记忆</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E8%AE%B0%E5%BF%86%EF%BC%88%E4%B8%8A%E4%B8%8B%E6%96%87%E7%AA%97%E5%8F%A3%EF%BC%89"><span class="nav-number">2.1.</span> <span class="nav-text">工作记忆（上下文窗口）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%95%BF%E6%9C%9F%E8%AE%B0%E5%BF%86%EF%BC%88%E5%A4%96%E9%83%A8%E7%9F%A5%E8%AF%86%E5%BA%93%EF%BC%89"><span class="nav-number">2.2.</span> <span class="nav-text">长期记忆（外部知识库）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E8%AE%B0%E5%BF%86%E7%B4%8A%E4%B9%B1%EF%BC%9AAI%E4%B9%9F%E4%BC%9A%E2%80%9D%E9%98%BF%E5%B0%94%E8%8C%A8%E6%B5%B7%E9%BB%98%E2%80%9D%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">三、记忆紊乱：AI也会”阿尔茨海默”？</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jerry Fan"
+      src="/images/avatar.svg">
+  <p class="site-author-name" itemprop="name">Jerry Fan</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jerry046918" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jerry046918" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fjy046918@outlook.com" title="E-Mail → mailto:fjy046918@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.woshipm.com/u/940369" title="人人都是产品经理 → https:&#x2F;&#x2F;www.woshipm.com&#x2F;u&#x2F;940369" rel="noopener" target="_blank"><i class="fa fa-pencil-alt fa-fw"></i>人人都是产品经理</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/fan-jia-yu-59" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;fan-jia-yu-59" rel="noopener" target="_blank"><i class="fa fa-comment fa-fw"></i>知乎</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Fan</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

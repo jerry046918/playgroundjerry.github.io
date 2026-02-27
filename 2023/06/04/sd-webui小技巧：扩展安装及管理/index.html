@@ -1,14 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  
-  
-  <title>SD webui小技巧：扩展安装及管理 | Jerry的赛博车库</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#3a6299">
+<meta name="generator" content="Hexo 8.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-31.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16.png">
+  <link rel="mask-icon" href="/images/avatar.svg" color="#3a6299">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"playgroundjerry.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#4a7eb8","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
   <meta name="description" content="丰富的扩展市场是Automatic1111版本的webui的一大特色，从辅助作画的模型工具（ControlNet、Cutoff）到帮助进行prompt填充的扩展应有尽有。本文主要介绍webui中通用的扩展安装及管理操作。 扩展安装方法一：使用官方扩展列表进行安装stable diffusion webui中提供了一个官方的插件列表，部分受官方承认的插件会被列入该列表中，并且标注一些基本的元数据信息">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SD webui小技巧：扩展安装及管理">
+<meta property="og:title" content="三、SD webui小技巧：扩展安装及管理">
 <meta property="og:url" content="https://playgroundjerry.github.io/2023/06/04/sd-webui%E5%B0%8F%E6%8A%80%E5%B7%A7%EF%BC%9A%E6%89%A9%E5%B1%95%E5%AE%89%E8%A3%85%E5%8F%8A%E7%AE%A1%E7%90%86/index.html">
 <meta property="og:site_name" content="Jerry的赛博车库">
 <meta property="og:description" content="丰富的扩展市场是Automatic1111版本的webui的一大特色，从辅助作画的模型工具（ControlNet、Cutoff）到帮助进行prompt填充的扩展应有尽有。本文主要介绍webui中通用的扩展安装及管理操作。 扩展安装方法一：使用官方扩展列表进行安装stable diffusion webui中提供了一个官方的插件列表，部分受官方承认的插件会被列入该列表中，并且标注一些基本的元数据信息">
@@ -21,7 +35,7 @@
 <meta property="og:image" content="https://www.playgroundjerry.tech/wp-content/uploads/2023/06/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20230604171457.png">
 <meta property="og:image" content="https://www.playgroundjerry.tech/wp-content/uploads/2023/06/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20230604172923.png">
 <meta property="article:published_time" content="2023-06-04T09:43:16.000Z">
-<meta property="article:modified_time" content="2026-02-27T17:19:14.377Z">
+<meta property="article:modified_time" content="2026-02-27T20:18:50.360Z">
 <meta property="article:author" content="Jerry Fan">
 <meta property="article:tag" content="AI绘画">
 <meta property="article:tag" content="ai">
@@ -30,91 +44,192 @@
 <meta property="article:tag" content="stablediffusion">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://www.playgroundjerry.tech/wp-content/uploads/2023/06/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20230604165052.png">
-  
-    <link rel="alternate" href="/atom.xml" title="Jerry的赛博车库" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
-  
-  
-  
-<link rel="stylesheet" href="/css/style.css">
 
-  
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+<link rel="canonical" href="https://playgroundjerry.github.io/2023/06/04/sd-webui%E5%B0%8F%E6%8A%80%E5%B7%A7%EF%BC%9A%E6%89%A9%E5%B1%95%E5%AE%89%E8%A3%85%E5%8F%8A%E7%AE%A1%E7%90%86/">
 
-  
-  
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.1"></head>
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Jerry的赛博车库</a>
-      </h1>
-      
-        <h2 id="subtitle-wrap">
-          <a href="/" id="subtitle">Playground of Jerry</a>
-        </h2>
-      
+  <title>三、SD webui小技巧：扩展安装及管理 | Jerry的赛博车库</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
     </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://playgroundjerry.github.io"></form>
-      </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Jerry的赛博车库</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Playground of Jerry</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
     </div>
   </div>
-</header>
+</div>
 
-      <div class="outer">
-        <section id="main"><article id="post-sd-webui小技巧：扩展安装及管理" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2023/06/04/sd-webui%E5%B0%8F%E6%8A%80%E5%B7%A7%EF%BC%9A%E6%89%A9%E5%B1%95%E5%AE%89%E8%A3%85%E5%8F%8A%E7%AE%A1%E7%90%86/" class="article-date">
-  <time class="dt-published" datetime="2023-06-04T09:43:16.000Z" itemprop="datePublished">2023-06-04</time>
-</a>
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
     
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Stable-Diffusion%E6%95%99%E7%A8%8B/">Stable Diffusion教程</a>
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
   </div>
 
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      SD webui小技巧：扩展安装及管理
-    </h1>
-  
 
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://playgroundjerry.github.io/2023/06/04/sd-webui%E5%B0%8F%E6%8A%80%E5%B7%A7%EF%BC%9A%E6%89%A9%E5%B1%95%E5%AE%89%E8%A3%85%E5%8F%8A%E7%AE%A1%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.svg">
+      <meta itemprop="name" content="Jerry Fan">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jerry的赛博车库">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          三、SD webui小技巧：扩展安装及管理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-06-04 17:43:16" itemprop="dateCreated datePublished" datetime="2023-06-04T17:43:16+08:00">2023-06-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2026-02-28 04:18:50" itemprop="dateModified" datetime="2026-02-28T04:18:50+08:00">2026-02-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI%E7%9B%B8%E5%85%B3/" itemprop="url" rel="index"><span itemprop="name">AI相关</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI%E7%9B%B8%E5%85%B3/AI%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">AI教程</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
       </header>
+
     
-    <div class="e-content article-entry" itemprop="articleBody">
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
         <p>丰富的扩展市场是Automatic1111版本的webui的一大特色，从辅助作画的模型工具（ControlNet、Cutoff）到帮助进行prompt填充的扩展应有尽有。本文主要介绍webui中通用的扩展安装及管理操作。</p>
 <h2 id="扩展安装"><a href="#扩展安装" class="headerlink" title="扩展安装"></a>扩展安装</h2><h3 id="方法一：使用官方扩展列表进行安装"><a href="#方法一：使用官方扩展列表进行安装" class="headerlink" title="方法一：使用官方扩展列表进行安装"></a>方法一：使用官方扩展列表进行安装</h3><p>stable diffusion webui中提供了一个官方的插件列表，部分受官方承认的插件会被列入该列表中，并且标注一些基本的元数据信息，例如插件类型、插件用途、名称等。 从官方列表安装插件是最简单、安全并且稳定的一种方式。 首先，启动你的webui，并选择最右侧的“Extension”标签页 <img src="https://www.playgroundjerry.tech/wp-content/uploads/2023/06/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20230604165052.png"> 选择Available选项，点击“Load from”按钮，将会从官方的链接中加载全部的扩展（理论上也可以自己定义列表来源，但目前为止还没了解到其他靠谱的列表）。由于特殊的网络原因，load可能会失败，最好是先开启全局的魔法网络，再尝试加载 该列表可以通过tag进行筛选，注意选中的标签将会被排除；可以通过旁边的order选项调整列表的排序 <img src="https://www.playgroundjerry.tech/wp-content/uploads/2023/06/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20230604165506.png">   浏览并选择扩展后的“Install”按钮，将会进入loading的状态，等待loading结束切换到“installed”选项，应该能够看到刚刚选择的扩展已经加入列表 <img src="https://www.playgroundjerry.tech/wp-content/uploads/2023/06/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20230604170024-e1685869376724.png"> 图片中prompt-all-in-one就是我们新增的插件，选中该插件，并点击“Apply and restart UI”，等待webui重启后就可以看到我们新安装的扩展了。</p>
@@ -125,148 +240,221 @@
 <h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>掌握了以上方法之后，我们就可以探索丰富多彩的扩展世界了，很多扩展能够大大的增强我们绘图的效率以及对绘图结果的控制水平，是我们使用Stable Diffusion的不二之选。 本站推荐扩展：</p>
 <p>[site_card ids&#x3D;”412,216,212”]</p>
 
-      
     </div>
-    <footer class="article-footer">
-      <a data-url="https://playgroundjerry.github.io/2023/06/04/sd-webui%E5%B0%8F%E6%8A%80%E5%B7%A7%EF%BC%9A%E6%89%A9%E5%B1%95%E5%AE%89%E8%A3%85%E5%8F%8A%E7%AE%A1%E7%90%86/" data-id="cuid0aI-iaNzCRxMf80zh3CS7" data-title="SD webui小技巧：扩展安装及管理" class="article-share-link"><span class="fa fa-share">分享</span></a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AI%E7%BB%98%E7%94%BB/" rel="tag">AI绘画</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ai/" rel="tag">ai</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/controlnet/" rel="tag">controlnet</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/extensions/" rel="tag">extensions</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/stablediffusion/" rel="tag">stablediffusion</a></li></ul>
 
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ai/" rel="tag"># ai</a>
+              <a href="/tags/controlnet/" rel="tag"># controlnet</a>
+              <a href="/tags/stablediffusion/" rel="tag"># stablediffusion</a>
+              <a href="/tags/AI%E7%BB%98%E7%94%BB/" rel="tag"># AI绘画</a>
+              <a href="/tags/extensions/" rel="tag"># extensions</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/05/30/%E3%80%90%E8%BD%AC%E8%BD%BD%E3%80%91state-of-gpt-openai-%E5%A4%A7%E7%A5%9Eandrej-karpathy-%E6%8F%AD%E7%A7%98%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%8E%9F%E7%90%86%E5%92%8C%E8%AE%AD%E7%BB%83%E5%85%A8%E8%BF%87/" rel="prev" title="【转载】State of GPT: OpenAI 大神Andrej Karpathy 揭秘大模型原理和训练全过程">
+      <i class="fa fa-chevron-left"></i> 【转载】State of GPT: OpenAI 大神Andrej Karpathy 揭秘大模型原理和训练全过程
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2026/01/28/AI%E4%B8%8D%E6%98%AF%E7%81%B5%E4%B8%B9%E5%A6%99%E8%8D%AF%EF%BC%8C%E6%B2%BB%E4%B8%8D%E4%BA%86%E5%A4%A7%E5%85%AC%E5%8F%B8%E7%9A%84%E2%80%9C%E6%9C%AA%E6%9D%A5%E7%84%A6%E8%99%91%E7%97%87%E2%80%9D/" rel="next" title="AI不是灵丹妙药，治不了大公司的“未来焦虑症”">
+      AI不是灵丹妙药，治不了大公司的“未来焦虑症” <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">扩展安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80%EF%BC%9A%E4%BD%BF%E7%94%A8%E5%AE%98%E6%96%B9%E6%89%A9%E5%B1%95%E5%88%97%E8%A1%A8%E8%BF%9B%E8%A1%8C%E5%AE%89%E8%A3%85"><span class="nav-number">1.1.</span> <span class="nav-text">方法一：使用官方扩展列表进行安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C%EF%BC%9A%E4%BD%BF%E7%94%A8GitHub%E4%BB%93%E5%BA%93%E9%93%BE%E6%8E%A5%E5%AE%89%E8%A3%85"><span class="nav-number">1.2.</span> <span class="nav-text">方法二：使用GitHub仓库链接安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%B8%89%EF%BC%9A%E7%9B%B4%E6%8E%A5%E5%B0%86%E6%89%A9%E5%B1%95%E6%96%87%E4%BB%B6%E5%8A%A0%E5%85%A5%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E4%B8%AD"><span class="nav-number">1.3.</span> <span class="nav-text">方法三：直接将扩展文件加入文件目录中</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E6%9B%B4%E6%96%B0"><span class="nav-number">2.</span> <span class="nav-text">扩展更新</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E5%8D%B8%E8%BD%BD"><span class="nav-number">3.</span> <span class="nav-text">扩展卸载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">4.</span> <span class="nav-text">结语</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jerry Fan"
+      src="/images/avatar.svg">
+  <p class="site-author-name" itemprop="name">Jerry Fan</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jerry046918" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jerry046918" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fjy046918@outlook.com" title="E-Mail → mailto:fjy046918@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.woshipm.com/u/940369" title="人人都是产品经理 → https:&#x2F;&#x2F;www.woshipm.com&#x2F;u&#x2F;940369" rel="noopener" target="_blank"><i class="fa fa-pencil-alt fa-fw"></i>人人都是产品经理</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/fan-jia-yu-59" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;fan-jia-yu-59" rel="noopener" target="_blank"><i class="fa fa-comment fa-fw"></i>知乎</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Fan</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
     </footer>
   </div>
-  
-    
-<nav id="article-nav">
-  
-  
-    <a href="/2023/05/30/%E3%80%90%E8%BD%AC%E8%BD%BD%E3%80%91state-of-gpt-openai-%E5%A4%A7%E7%A5%9Eandrej-karpathy-%E6%8F%AD%E7%A7%98%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%8E%9F%E7%90%86%E5%92%8C%E8%AE%AD%E7%BB%83%E5%85%A8%E8%BF%87/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">后一篇</strong>
-      <div class="article-nav-title">【转载】State of GPT: OpenAI 大神Andrej Karpathy 揭秘大模型原理和训练全过程</div>
-    </a>
-  
-</nav>
 
   
-</article>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
 
 
-</section>
-        
-          <aside id="sidebar">
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">分类</h3>
-    <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/AI%E6%95%99%E7%A8%8B/">AI教程</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Stable-Diffusion%E6%95%99%E7%A8%8B/">Stable Diffusion教程</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/">产品经理</a></li></ul>
-    </div>
-  </div>
+<script src="/js/schemes/muse.js"></script>
 
 
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">标签</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E7%BB%98%E7%94%BB/" rel="tag">AI绘画</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Autogpt/" rel="tag">Autogpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/B%E7%AB%AF/" rel="tag">B端</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ai/" rel="tag">ai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chatgpt/" rel="tag">chatgpt</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/civitai/" rel="tag">civitai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/civitai-helper/" rel="tag">civitai helper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/controlnet/" rel="tag">controlnet</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/extensions/" rel="tag">extensions</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google/" rel="tag">google</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lora/" rel="tag">lora</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/openai/" rel="tag">openai</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stablediffusion/" rel="tag">stablediffusion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/" rel="tag">产品经理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%BA%E4%BA%BA%E9%83%BD%E6%98%AF%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/" rel="tag">人人都是产品经理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%BA%E5%8A%9B%E8%B5%84%E6%BA%90/" rel="tag">人力资源</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" rel="tag">人工智能</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%AC%E5%BC%80%E4%BF%A1/" rel="tag">公开信</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%B9%E8%AE%AD/" rel="tag">培训</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%99%E7%A8%8B/" rel="tag">教程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%AF%94%E5%B0%94%E7%9B%96%E8%8C%A8/" rel="tag">比尔盖茨</a></li></ul>
-    </div>
-  </div>
+<script src="/js/next-boot.js"></script>
 
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">标签云</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/AI%E7%BB%98%E7%94%BB/" style="font-size: 13.33px;">AI绘画</a> <a href="/tags/Autogpt/" style="font-size: 10px;">Autogpt</a> <a href="/tags/B%E7%AB%AF/" style="font-size: 13.33px;">B端</a> <a href="/tags/ai/" style="font-size: 20px;">ai</a> <a href="/tags/chatgpt/" style="font-size: 13.33px;">chatgpt</a> <a href="/tags/civitai/" style="font-size: 10px;">civitai</a> <a href="/tags/civitai-helper/" style="font-size: 13.33px;">civitai helper</a> <a href="/tags/controlnet/" style="font-size: 13.33px;">controlnet</a> <a href="/tags/extensions/" style="font-size: 10px;">extensions</a> <a href="/tags/google/" style="font-size: 10px;">google</a> <a href="/tags/lora/" style="font-size: 10px;">lora</a> <a href="/tags/openai/" style="font-size: 10px;">openai</a> <a href="/tags/stablediffusion/" style="font-size: 16.67px;">stablediffusion</a> <a href="/tags/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/" style="font-size: 16.67px;">产品经理</a> <a href="/tags/%E4%BA%BA%E4%BA%BA%E9%83%BD%E6%98%AF%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/" style="font-size: 16.67px;">人人都是产品经理</a> <a href="/tags/%E4%BA%BA%E5%8A%9B%E8%B5%84%E6%BA%90/" style="font-size: 10px;">人力资源</a> <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" style="font-size: 16.67px;">人工智能</a> <a href="/tags/%E5%85%AC%E5%BC%80%E4%BF%A1/" style="font-size: 10px;">公开信</a> <a href="/tags/%E5%9F%B9%E8%AE%AD/" style="font-size: 10px;">培训</a> <a href="/tags/%E6%95%99%E7%A8%8B/" style="font-size: 13.33px;">教程</a> <a href="/tags/%E6%AF%94%E5%B0%94%E7%9B%96%E8%8C%A8/" style="font-size: 10px;">比尔盖茨</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">归档</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/06/">六月 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">五月 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/04/">四月 2023</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">最新文章</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2023/06/04/sd-webui%E5%B0%8F%E6%8A%80%E5%B7%A7%EF%BC%9A%E6%89%A9%E5%B1%95%E5%AE%89%E8%A3%85%E5%8F%8A%E7%AE%A1%E7%90%86/">SD webui小技巧：扩展安装及管理</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/30/%E3%80%90%E8%BD%AC%E8%BD%BD%E3%80%91state-of-gpt-openai-%E5%A4%A7%E7%A5%9Eandrej-karpathy-%E6%8F%AD%E7%A7%98%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%8E%9F%E7%90%86%E5%92%8C%E8%AE%AD%E7%BB%83%E5%85%A8%E8%BF%87/">【转载】State of GPT: OpenAI 大神Andrej Karpathy 揭秘大模型原理和训练全过程</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/%E7%90%86%E8%A7%A3%E4%B8%9A%E5%8A%A1%EF%BC%9A%E4%BC%81%E4%B8%9A%E5%9F%B9%E8%AE%AD%E7%AE%A1%E7%90%86%E4%B8%9A%E5%8A%A1%E6%A6%82%E8%A7%88/">理解业务：企业培训管理业务概览</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/b%E7%AB%AF%E6%9D%82%E8%B0%88%EF%BC%9Ab%E7%AB%AF%E4%B8%8Ec%E7%AB%AF%E9%9C%80%E6%B1%82%E7%9A%84%E5%B7%AE%E5%BC%82/">B端杂谈：B端与C端需求的差异</a>
-          </li>
-        
-          <li>
-            <a href="/2023/05/23/chatgpt%E7%B1%BB%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%EF%BC%8C%E5%A6%82%E4%BD%95%E6%94%B9%E5%8F%98%E4%BC%A0%E7%BB%9F%E5%B7%A5%E4%BD%9C%E5%92%8C%E4%BA%A7%E5%93%81%E8%AE%BE%E8%AE%A1/">ChatGPT类人工智能，如何改变传统工作和产品设计</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2026 Jerry Fan<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
-
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-
-<script src="/js/jquery-3.6.4.min.js"></script>
 
 
 
   
-<script src="/fancybox/jquery.fancybox.min.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
 
 
 
 
 
-  </div>
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
 </body>
 </html>
