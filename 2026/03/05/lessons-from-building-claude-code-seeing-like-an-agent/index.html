@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#3a6299">
+<meta name="generator" content="Hexo 8.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-31.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16.png">
+  <link rel="mask-icon" href="/images/avatar.svg" color="#3a6299">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto Sans SC, Noto Sans:300,300italic,400,400italic,700,700italic|JetBrains Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.playgroundjerry.tech","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#4a7eb8","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="原文链接：https:&#x2F;&#x2F;x.com&#x2F;trq212&#x2F;status&#x2F;2027463795355095314  原文标题：Lessons from Building Claude Code: Seeing like an Agent  作者：Thariq（@trq212），Claude Code（@anthropicai）团队成员，YC W20 校友，MIT 媒体实验室前成员。  构建智能体系统最困难">
+<meta property="og:type" content="article">
+<meta property="og:title" content="构建 Claude Code 的经验教训：像智能体一样思考">
+<meta property="og:url" content="https://www.playgroundjerry.tech/2026/03/05/lessons-from-building-claude-code-seeing-like-an-agent/index.html">
+<meta property="og:site_name" content="Jerry的赛博车库">
+<meta property="og:description" content="原文链接：https:&#x2F;&#x2F;x.com&#x2F;trq212&#x2F;status&#x2F;2027463795355095314  原文标题：Lessons from Building Claude Code: Seeing like an Agent  作者：Thariq（@trq212），Claude Code（@anthropicai）团队成员，YC W20 校友，MIT 媒体实验室前成员。  构建智能体系统最困难">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.playgroundjerry.tech/images/posts/2026/03/HCLxg2JbsAA3Ag_.jpg">
+<meta property="og:image" content="https://www.playgroundjerry.tech/images/posts/2026/03/HCL0gcObkAA4tKt.jpg">
+<meta property="og:image" content="https://www.playgroundjerry.tech/images/posts/2026/03/HCLxrfXbEAUXwRV.jpg">
+<meta property="article:published_time" content="2026-03-05T13:56:49.334Z">
+<meta property="article:modified_time" content="2026-03-05T14:32:50.551Z">
+<meta property="article:author" content="Jerry Fan">
+<meta property="article:tag" content="agent">
+<meta property="article:tag" content="ai">
+<meta property="article:tag" content="人工智能">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.playgroundjerry.tech/images/posts/2026/03/HCLxg2JbsAA3Ag_.jpg">
+
+<link rel="canonical" href="https://www.playgroundjerry.tech/2026/03/05/lessons-from-building-claude-code-seeing-like-an-agent/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6626975679787601"
+     crossorigin="anonymous"></script>
+
+  <title>构建 Claude Code 的经验教训：像智能体一样思考 | Jerry的赛博车库</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TF5T2W3BE8"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-TF5T2W3BE8');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Jerry的赛博车库</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Playground of Jerry</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.playgroundjerry.tech/2026/03/05/lessons-from-building-claude-code-seeing-like-an-agent/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.svg">
+      <meta itemprop="name" content="Jerry Fan">
+      <meta itemprop="description" content="人是目的，不是手段">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jerry的赛博车库">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          构建 Claude Code 的经验教训：像智能体一样思考
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2026-03-05 21:56:49" itemprop="dateCreated datePublished" datetime="2026-03-05T21:56:49+08:00">2026-03-05</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI%E7%9B%B8%E5%85%B3/" itemprop="url" rel="index"><span itemprop="name">AI相关</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI%E7%9B%B8%E5%85%B3/%E8%BD%AC%E8%BD%BD%E6%96%87%E7%AB%A0/" itemprop="url" rel="index"><span itemprop="name">转载文章</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>原文链接：<a target="_blank" rel="noopener" href="https://x.com/trq212/status/2027463795355095314">https://x.com/trq212/status/2027463795355095314</a></p>
+<p>原文标题：Lessons from Building Claude Code: Seeing like an Agent</p>
+<p>作者：Thariq（@trq212），Claude Code（@anthropicai）团队成员，YC W20 校友，MIT 媒体实验室前成员。</p>
+</blockquote>
+<p>构建智能体系统最困难的部分之一是构建它的<strong>动作空间（action space）</strong>。</p>
+<p>Claude 通过<strong>工具调用</strong>（Tool Calling）来执行操作，但在 Claude API 中可以通过多种方式构建工具，例如使用 bash、技能（skills）以及最近新增的代码执行功能（了解更多关于 Claude API 中程序化工具调用的信息<a target="_blank" rel="noopener" href="https://x.com/RLanceMartin/status/2027450018513490419">@RLanceMartin的新文章</a>）。</p>
+<p>面对这么多选项，你如何设计智能体的工具？你只需要一个工具（如代码执行或 bash）吗？还是应该有 50 个工具，每个对应智能体可能遇到的一个用例？</p>
+<hr>
+<h2 id="站在模型的角度思考"><a href="#站在模型的角度思考" class="headerlink" title="站在模型的角度思考"></a>站在模型的角度思考</h2><p>为了让自己站在模型的角度思考，我喜欢想象自己被给了一道很难的数学题。你会需要什么工具来解决它？这取决于你自己的技能！</p>
+<ul>
+<li><strong>纸笔</strong>是最低要求，但你会受限于手动计算。</li>
+<li><strong>计算器</strong>会更好，但你需要知道如何操作高级功能。</li>
+<li><strong>最快、最强大的选项是计算机</strong>，但你必须知道如何用它来编写和执行代码。</li>
+</ul>
+<p>这是设计智能体的一个有用框架。你想给它与其自身能力相匹配的工具。但你怎么知道这些能力是什么呢？你需要<strong>关注、阅读它的输出、进行实验</strong>。你要学会<strong>像智能体一样思考</strong>。</p>
+<p>以下是我们在构建 Claude Code 时通过关注 Claude 学到的一些经验。</p>
+<hr>
+<h2 id="经验一：改进引导（Elicitation）与-AskUserQuestion-工具"><a href="#经验一：改进引导（Elicitation）与-AskUserQuestion-工具" class="headerlink" title="经验一：改进引导（Elicitation）与 AskUserQuestion 工具"></a>经验一：改进引导（Elicitation）与 AskUserQuestion 工具</h2><p><img src="/images/posts/2026/03/HCLxg2JbsAA3Ag_.jpg"></p>
+<p>在构建 AskUserQuestion 工具时，我们的目标是提高 Claude 提问的能力（通常称为<strong>引导</strong>）。</p>
+<p>虽然 Claude 可以用纯文本提问，但我们发现回答这些问题感觉花费了不必要的时间。如何降低这种摩擦，增加用户与 Claude 之间的沟通带宽呢？</p>
+<h3 id="尝试-1-编辑-ExitPlanTool"><a href="#尝试-1-编辑-ExitPlanTool" class="headerlink" title="尝试 #1 - 编辑 ExitPlanTool"></a>尝试 #1 - 编辑 ExitPlanTool</h3><p>我们首先尝试的是在 ExitPlanTool 中添加一个参数，让问题数组与计划一起出现。这是最容易实现的方案，但它让 Claude 感到困惑，因为我们同时要求提供计划和对计划的一组问题。如果用户的回答与计划内容冲突怎么办？Claude 需要调用两次 ExitPlanTool 吗？我们需要另一种方法。</p>
+<p>（你可以在我们的<a target="_blank" rel="noopener" href="https://x.com/trq212/status/2024574133011673516">提示缓存相关文章</a>中阅读更多关于为什么我们要创建 ExitPlanTool 的内容）</p>
+<h3 id="尝试-2-更改输出格式"><a href="#尝试-2-更改输出格式" class="headerlink" title="尝试 #2 - 更改输出格式"></a>尝试 #2 - 更改输出格式</h3><p>接下来，我们尝试修改 Claude 的输出指令，让它使用一种稍微修改过的 Markdown 格式来提问。例如，我们可以要求它输出一个带括号选项的项目符号问题列表。然后我们可以解析这些问题并将其格式化为用户界面。</p>
+<p>虽然这是最通用的改变，Claude 似乎也擅长输出这种格式，但它<strong>无法保证</strong>。Claude 会添加额外的句子、省略选项，或者使用完全不同的格式。</p>
+<h3 id="尝试-3-AskUserQuestion-工具"><a href="#尝试-3-AskUserQuestion-工具" class="headerlink" title="尝试 #3 - AskUserQuestion 工具"></a>尝试 #3 - AskUserQuestion 工具</h3><p><img src="/images/posts/2026/03/HCL0gcObkAA4tKt.jpg"></p>
+<p>最终，我们决定创建一个 Claude 可以随时调用的工具，但我们特别提示它在<strong>计划模式</strong>（plan mode）期间使用。当工具触发时，我们会显示一个弹窗来展示问题，并阻塞智能体的循环直到用户回答。</p>
+<p>这个工具让我们能够提示 Claude 输出结构化内容，并帮助我们确保 Claude 给用户提供多个选项。它还让用户能够以多种方式组合这个功能，例如在 Agent SDK 中调用它或在技能中引用它。</p>
+<p>最重要的是，<strong>Claude 似乎喜欢调用这个工具</strong>，我们发现它的输出效果很好。即使是设计得最好的工具，如果 Claude 不理解如何调用它，也无法发挥作用。</p>
+<p>这是否是 Claude Code 中引导功能的最终形态？我们不确定。正如你在下一个例子中看到的，对一个模型有效的方法对另一个模型可能不是最好的。</p>
+<hr>
+<h2 id="经验二：随着能力更新——任务与待办事项"><a href="#经验二：随着能力更新——任务与待办事项" class="headerlink" title="经验二：随着能力更新——任务与待办事项"></a>经验二：随着能力更新——任务与待办事项</h2><p><img src="/images/posts/2026/03/HCLxrfXbEAUXwRV.jpg"></p>
+<p>当我们首次推出 Claude Code 时，我们意识到模型需要一个<strong>待办事项列表</strong>（Todo list）来保持正轨。待办事项可以在开始时写好，然后随着模型的工作逐一勾选。为此，我们给了 Claude <strong>TodoWrite 工具</strong>，它会写入或更新待办事项并显示给用户。</p>
+<p>但即便如此，我们经常看到 Claude 忘记它需要做什么。为了适应这种情况，我们每 5 轮插入一次系统提醒，提醒 Claude 它的目标。</p>
+<p>但随着模型的改进，它们不仅不需要被提醒待办事项列表，反而可能觉得它<strong>限制了它们</strong>。收到待办事项列表的提醒会让 Claude 认为它必须严格遵守列表，而不是修改它。我们还看到 Opus 4.5 在使用子智能体方面变得更好，但子智能体如何协调共享的待办事项列表呢？</p>
+<p>看到这一点，我们用<a target="_blank" rel="noopener" href="https://x.com/trq212/status/2014480496013803643"><strong>任务工具</strong>（Task Tool）</a>取代了 TodoWrite。待办事项是为了让模型保持正轨，而任务更多是关于帮助智能体相互通信。任务可以包含依赖关系、在子智能体之间共享更新，模型可以修改和删除它们。</p>
+<p>随着模型能力的提升，你的模型曾经需要的工具现在可能会限制它们。重要的是要不断重新审视关于需要什么工具的先前假设。这也是为什么支持一小部分能力特征相似的模型是有用的。</p>
+<hr>
+<h2 id="经验三：设计搜索界面"><a href="#经验三：设计搜索界面" class="headerlink" title="经验三：设计搜索界面"></a>经验三：设计搜索界面</h2><p>对 Claude 来说，特别重要的一组工具是可以用来构建自身上下文的搜索工具。</p>
+<p>当 Claude Code 首次推出时，我们使用 <strong>RAG 向量数据库</strong>来为 Claude 查找上下文。虽然 RAG 强大且快速，但它需要索引和设置，并且在不同环境中可能很脆弱。更重要的是，Claude 是<strong>被给予</strong>这个上下文，而不是自己找到上下文。</p>
+<p>但如果 Claude 可以在网上搜索，为什么不能在代码库中搜索呢？通过给 Claude 一个 <strong>Grep 工具</strong>，我们可以让它自己搜索文件并构建上下文。</p>
+<p>这是我们随着 Claude 变得更聪明而看到的一种模式——如果给它正确的工具，它会越来越擅长构建自己的上下文。</p>
+<p>当我们引入<strong>智能体技能</strong>（Agent Skills）时，我们正式提出了<strong>渐进式披露</strong>（progressive disclosure）的概念，它允许智能体通过探索逐步发现相关上下文。</p>
+<p>Claude 可以阅读技能文件，这些文件又可以引用其他文件，模型可以递归地阅读这些文件。事实上，技能的常见用途是为 Claude 添加更多搜索能力，比如给它关于如何使用 API 或查询数据库的指令。</p>
+<p>在一年的时间里，Claude 从几乎无法构建自己的上下文，发展到能够跨多个文件层进行嵌套搜索，找到它需要的精确上下文。</p>
+<p><strong>渐进式披露</strong>现在是我们添加新功能而不添加工具的常用技术。</p>
+<hr>
+<h2 id="渐进式披露——Claude-Code-指南智能体"><a href="#渐进式披露——Claude-Code-指南智能体" class="headerlink" title="渐进式披露——Claude Code 指南智能体"></a>渐进式披露——Claude Code 指南智能体</h2><p>Claude Code 目前大约有 20 个工具，我们不断问自己是否需要所有这些工具。添加新工具的门槛很高，因为这会给模型多一个需要思考的选项。</p>
+<p>例如，我们注意到 Claude 对如何使用 Claude Code 了解不够。如果你问它如何添加 MCP 或斜杠命令的作用，它无法回答。</p>
+<p>我们可以把所有这些信息放在系统提示中，但考虑到用户很少问这些问题，这会增加<strong>上下文污染（context rot）</strong>，并干扰 Claude Code 的主要工作：编写代码。</p>
+<p>相反，我们尝试了一种渐进式披露的形式。我们给了 Claude 一个指向其文档的链接，它可以加载这些文档来搜索更多信息。这有效，但我们发现 Claude 会将大量结果加载到上下文中才能找到正确答案，而实际上你只需要答案。</p>
+<p>所以我们构建了 <strong>Claude Code 指南子智能体</strong>，当用户询问关于 Claude Code 本身的问题时，Claude 会被提示调用它。这个子智能体有关于如何良好搜索文档以及返回什么的详细指令。</p>
+<p>虽然这并不完美——当你问它如何设置自己时，Claude 仍然会感到困惑——但比以前好多了！我们能够在不添加工具的情况下扩展 Claude 的动作空间。</p>
+<hr>
+<h2 id="结语：艺术，而非科学"><a href="#结语：艺术，而非科学" class="headerlink" title="结语：艺术，而非科学"></a>结语：艺术，而非科学</h2><p>如果你希望获得一套关于如何构建工具的严格规则，很遗憾，这不是本指南的内容。为模型设计工具既是<strong>科学</strong>，也是<strong>艺术</strong>。它严重依赖于你使用的模型、智能体的目标以及它运行的环境。</p>
+<p><strong>经常实验，阅读你的输出，尝试新事物。像智能体一样思考。</strong></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ai/" rel="tag"># ai</a>
+              <a href="/tags/agent/" rel="tag"># agent</a>
+              <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" rel="tag"># 人工智能</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2026/03/03/safety-for-openclaw/" rel="prev" title="OpenClaw安全机制科普：保护你的数据与隐私">
+      <i class="fa fa-chevron-left"></i> OpenClaw安全机制科普：保护你的数据与隐私
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AB%99%E5%9C%A8%E6%A8%A1%E5%9E%8B%E7%9A%84%E8%A7%92%E5%BA%A6%E6%80%9D%E8%80%83"><span class="nav-number">1.</span> <span class="nav-text">站在模型的角度思考</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%8F%E9%AA%8C%E4%B8%80%EF%BC%9A%E6%94%B9%E8%BF%9B%E5%BC%95%E5%AF%BC%EF%BC%88Elicitation%EF%BC%89%E4%B8%8E-AskUserQuestion-%E5%B7%A5%E5%85%B7"><span class="nav-number">2.</span> <span class="nav-text">经验一：改进引导（Elicitation）与 AskUserQuestion 工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95-1-%E7%BC%96%E8%BE%91-ExitPlanTool"><span class="nav-number">2.1.</span> <span class="nav-text">尝试 #1 - 编辑 ExitPlanTool</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95-2-%E6%9B%B4%E6%94%B9%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.2.</span> <span class="nav-text">尝试 #2 - 更改输出格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%9D%E8%AF%95-3-AskUserQuestion-%E5%B7%A5%E5%85%B7"><span class="nav-number">2.3.</span> <span class="nav-text">尝试 #3 - AskUserQuestion 工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%8F%E9%AA%8C%E4%BA%8C%EF%BC%9A%E9%9A%8F%E7%9D%80%E8%83%BD%E5%8A%9B%E6%9B%B4%E6%96%B0%E2%80%94%E2%80%94%E4%BB%BB%E5%8A%A1%E4%B8%8E%E5%BE%85%E5%8A%9E%E4%BA%8B%E9%A1%B9"><span class="nav-number">3.</span> <span class="nav-text">经验二：随着能力更新——任务与待办事项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%8F%E9%AA%8C%E4%B8%89%EF%BC%9A%E8%AE%BE%E8%AE%A1%E6%90%9C%E7%B4%A2%E7%95%8C%E9%9D%A2"><span class="nav-number">4.</span> <span class="nav-text">经验三：设计搜索界面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B8%90%E8%BF%9B%E5%BC%8F%E6%8A%AB%E9%9C%B2%E2%80%94%E2%80%94Claude-Code-%E6%8C%87%E5%8D%97%E6%99%BA%E8%83%BD%E4%BD%93"><span class="nav-number">5.</span> <span class="nav-text">渐进式披露——Claude Code 指南智能体</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD%EF%BC%9A%E8%89%BA%E6%9C%AF%EF%BC%8C%E8%80%8C%E9%9D%9E%E7%A7%91%E5%AD%A6"><span class="nav-number">6.</span> <span class="nav-text">结语：艺术，而非科学</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jerry Fan"
+      src="/images/avatar.svg">
+  <p class="site-author-name" itemprop="name">Jerry Fan</p>
+  <div class="site-description" itemprop="description">人是目的，不是手段</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jerry046918" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jerry046918" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fjy046918@outlook.com" title="E-Mail → mailto:fjy046918@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.woshipm.com/u/940369" title="人人都是产品经理 → https:&#x2F;&#x2F;www.woshipm.com&#x2F;u&#x2F;940369" rel="noopener" target="_blank"><i class="fa fa-pencil-alt fa-fw"></i>人人都是产品经理</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/fan-jia-yu-59" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;fan-jia-yu-59" rel="noopener" target="_blank"><i class="fa fa-comment fa-fw"></i>知乎</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://openclaw101.dev/" title="https:&#x2F;&#x2F;openclaw101.dev&#x2F;" rel="noopener" target="_blank">openclaw101</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://shitjournal.org/" title="https:&#x2F;&#x2F;shitjournal.org&#x2F;" rel="noopener" target="_blank">S.H.I.T. Journal</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Fan</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
