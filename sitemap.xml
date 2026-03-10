@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://www.playgroundjerry.tech/2026/03/11/harness-engineering/</loc>
+    <loc>https://www.playgroundjerry.tech/2026/03/05/lessons-from-building-claude-code-seeing-like-an-agent/</loc>
     
     <lastmod>2026-03-10</lastmod>
     
@@ -11,9 +11,9 @@
   </url>
   
   <url>
-    <loc>https://www.playgroundjerry.tech/2026/03/05/lessons-from-building-claude-code-seeing-like-an-agent/</loc>
+    <loc>https://www.playgroundjerry.tech/2026/03/11/harness-engineering/</loc>
     
-    <lastmod>2026-03-05</lastmod>
+    <lastmod>2026-03-10</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
