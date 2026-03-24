@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#3a6299">
+<meta name="generator" content="Hexo 8.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-31.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16.png">
+  <link rel="mask-icon" href="/images/avatar.svg" color="#3a6299">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto Sans SC, Noto Sans:300,300italic,400,400italic,700,700italic|JetBrains Mono:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.playgroundjerry.tech","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#4a7eb8","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="26年以来，”龙虾”（OpenClaw）绝对是一个毫无疑问的热门话题。从民间个人到政府组织，所有人都在尝试和探讨”养龙虾”。笔者本人对于OpenClaw的火热实际上抱有一种谨慎态度——毕竟OpenClaw作为一个开源的私人助理框架，本身还多有不成熟之处（包括安全问题、框架本身的效率问题等等），是否值得大家如此All In地去追逐，确实令人有所疑虑。  但毋庸置疑的是，用户与Agent共生的时代确实">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Agent Readiness：产品设计的下一个护城河">
+<meta property="og:url" content="https://www.playgroundjerry.tech/2026/03/25/agent-readiness/index.html">
+<meta property="og:site_name" content="Jerry的赛博车库">
+<meta property="og:description" content="26年以来，”龙虾”（OpenClaw）绝对是一个毫无疑问的热门话题。从民间个人到政府组织，所有人都在尝试和探讨”养龙虾”。笔者本人对于OpenClaw的火热实际上抱有一种谨慎态度——毕竟OpenClaw作为一个开源的私人助理框架，本身还多有不成熟之处（包括安全问题、框架本身的效率问题等等），是否值得大家如此All In地去追逐，确实令人有所疑虑。  但毋庸置疑的是，用户与Agent共生的时代确实">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-03-24T18:05:29.892Z">
+<meta property="article:modified_time" content="2026-03-24T18:08:25.365Z">
+<meta property="article:author" content="Jerry Fan">
+<meta property="article:tag" content="agent">
+<meta property="article:tag" content="产品经理">
+<meta property="article:tag" content="人人都是产品经理">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://www.playgroundjerry.tech/2026/03/25/agent-readiness/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6626975679787601"
+     crossorigin="anonymous"></script>
+
+  <title>Agent Readiness：产品设计的下一个护城河 | Jerry的赛博车库</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TF5T2W3BE8"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-TF5T2W3BE8');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Jerry的赛博车库</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Playground of Jerry</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://www.playgroundjerry.tech/2026/03/25/agent-readiness/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.svg">
+      <meta itemprop="name" content="Jerry Fan">
+      <meta itemprop="description" content="人是目的，不是手段">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jerry的赛博车库">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Agent Readiness：产品设计的下一个护城河
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2026-03-25 02:05:29" itemprop="dateCreated datePublished" datetime="2026-03-25T02:05:29+08:00">2026-03-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI%E7%9B%B8%E5%85%B3/" itemprop="url" rel="index"><span itemprop="name">AI相关</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AI%E7%9B%B8%E5%85%B3/%E6%9D%82%E8%B0%88/" itemprop="url" rel="index"><span itemprop="name">杂谈</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>26年以来，”龙虾”（OpenClaw）绝对是一个毫无疑问的热门话题。从民间个人到政府组织，所有人都在尝试和探讨”养龙虾”。笔者本人对于OpenClaw的火热实际上抱有一种谨慎态度——毕竟OpenClaw作为一个开源的私人助理框架，本身还多有不成熟之处（包括安全问题、框架本身的效率问题等等），是否值得大家如此All In地去追逐，确实令人有所疑虑。</p>
+<p>但毋庸置疑的是，<strong>用户与Agent共生的时代确实被开启了</strong>。随着各种大厂推出桌面端、免部署的各种新的产品形态，Agent可能会以前所未有的速度被迅速推开。</p>
+<p>那么从一个产品经理角度，我们如何看待新时代的产品设计？这将成为每个从业者都需要深刻思考的话题。</p>
+<h1 id="反思：为什么”把Agent做进产品”可能是陷阱"><a href="#反思：为什么”把Agent做进产品”可能是陷阱" class="headerlink" title="反思：为什么”把Agent做进产品”可能是陷阱"></a>反思：为什么”把Agent做进产品”可能是陷阱</h1><p>我想很多产品实际上在过去几年里，都是在不断尝试把Agent加入系统中。这是最直观的一种产品设计思路：既然Agent这么强大，是不是它可以帮助我们的产品提供更强的服务呢？</p>
+<p>这当然会为用户提供一些帮助，但是这个实现路径上我们不得不面对两个致命问题：</p>
+<h2 id="1-场景错配：你的瓶颈真的需要Agent吗？"><a href="#1-场景错配：你的瓶颈真的需要Agent吗？" class="headerlink" title="1. 场景错配：你的瓶颈真的需要Agent吗？"></a>1. 场景错配：你的瓶颈真的需要Agent吗？</h2><p>很多产品实际上提供的服务，体验的瓶颈并不在Agent所擅长的领域（搜集并总结复杂信息、编排流程并自动执行、批量操作大量重复工作）。那么加上Agent往往产生的结果只是锦上添花（甚至画蛇添足）。</p>
+<p>这里的典型例子就是我一直不能理解的滴滴一直尝试加入AI帮忙叫车。很显然滴滴提供的主要服务是一个撮合标准服务交易的平台，而叫车是一个既不需要了解太多信息，也不存在复杂操作流程的动作。用户原本就只需要输入目的地、点击一下叫车就完成的事情，Agent加入之后反而增加了模糊性和操作时长。除了强行增加了AI的元素之外，我实在不知道它为用户提供了什么价值。</p>
+<p>Agent不是万能调料。在简单确定性场景中引入Agent，本质上是把”确定性体验”降级为”概率性体验”，这是用户体验的倒退。</p>
+<h2 id="2-系统排斥：Agent与遗留系统的兼容性危机"><a href="#2-系统排斥：Agent与遗留系统的兼容性危机" class="headerlink" title="2. 系统排斥：Agent与遗留系统的兼容性危机"></a>2. 系统排斥：Agent与遗留系统的兼容性危机</h2><p>在传统的软件产品中，我们为了支持复杂的业务流程，已经构建了庞大的软件工程，其中环环相扣、精密而难以理解（所谓屎山）。那么把Agent这么一个具有模糊性以及不可控成本的东西加入到这个系统里，会更好吗？</p>
+<p>至少到目前为止，大部分产品的尝试还是将Agent放在交互层，给用户提供方便和情绪价值为主。真正的融入流程做出决定，似乎还有一定难度。这背后的本质是<strong>范式的冲突</strong>：Agent代表着即兴、模糊、意图驱动；而遗留系统代表着预设、精确、流程驱动。</p>
+<h1 id="转向：Agent-Readiness-Agent-Inside"><a href="#转向：Agent-Readiness-Agent-Inside" class="headerlink" title="转向：Agent Readiness &gt; Agent Inside"></a>转向：Agent Readiness &gt; Agent Inside</h1><p>返回到本源的问题，我们希望让产品与Agent进行融合，或者说跟上Agent时代的步伐，还有一个可能看起来没那么Fancy，但是非常简单有效的方向往往被我们忽略了——<strong>面向用户私人Agent的交互设计</strong>。</p>
+<p>很多产品已经有能力解决很复杂的问题，在它们的流程、功能中融入一个Agent是非常大的挑战。但是对于用户来说，用户永远不会只操作某一个产品，他的生活场景天然就是需要复杂信息搜集和编排的。他们天然就需要一个私人的Agent（这也是为什么”龙虾”这么有魅力的原因）。</p>
+<p>但是Agent遇到一个复杂应用的内部操作时候，往往只能停下来，告诉用户：”你得自己操作”。当用户开始广泛地使用Agent作为自己生活和工作的助手，这种体验越来越糟糕。如果这时候一个应用非常流畅地支持Agent调用自己的服务，可想而知用户会由于这种便捷性大量地迁移到这些Agent友好的应用中。</p>
+<p>因此相较于强行把Agent融入你已有的产品里，可能更好的（商业上和用户体验上都更好）的一个方向是：<strong>尽快推进你的产品的Agent交互友好化，让你的产品不仅仅是个能力孤岛，而是成为用户可编排的能力的一部分</strong>。</p>
+<p>这就引出了一个更深层的问题：当用户不再打开你的App，而是通过他们的私人Agent（OpenClaw、Claude Desktop或其他）来访问服务时，<strong>什么构成了你的竞争壁垒？</strong></p>
+<p>答案正在从”精美的UI&#x2F;UX”转向**“被Agent理解的能力”（Agent Readiness）<strong>。在传统范式中，护城河建立在精心设计的界面和流畅的交互上；但在Agent中心主义的新秩序中，</strong>“被发现的便利性”将取代“被使用的愉悦感”成为核心价值主张**。</p>
+<h1 id="如何构建：Agent原生产品的设计原则"><a href="#如何构建：Agent原生产品的设计原则" class="headerlink" title="如何构建：Agent原生产品的设计原则"></a>如何构建：Agent原生产品的设计原则</h1><p>那么，How we build new app?</p>
+<p>如果你认同未来的用户将通过他们的私人Agent来访问服务，而非打开你的App界面，那么产品设计逻辑需要根本性重构：</p>
+<h2 id="1-从”用户体验”到”Agent体验”（AX）"><a href="#1-从”用户体验”到”Agent体验”（AX）" class="headerlink" title="1. 从”用户体验”到”Agent体验”（AX）"></a>1. 从”用户体验”到”Agent体验”（AX）</h2><p>传统UX的核心是”引导用户按我们想的做”——通过精美的界面、流畅的动效、精心设计的导航路径来引导用户行为。但Agent没有眼睛（不看界面），没有情感（不需要动效），也没有耐心（不需要引导）。</p>
+<p><strong>新的设计对象是Agent</strong>。你需要提供的是：</p>
+<ul>
+<li><strong>完整的能力契约</strong>：清晰声明你能做什么、不能做什么、需要什么条件、会出什么错</li>
+<li><strong>结构化自我描述</strong>：不是给人类看的API文档，而是给Agent看的”说明书”——包含语义化的API描述、业务约束、前置条件、失败模式</li>
+<li><strong>可验证的行为预期</strong>：Agent需要能够预测你的行为，而不是被你的”智能”惊喜到</li>
+</ul>
+<p>这要求设计师摒弃”控制冲动”，转而采用”契约思维”：<strong>完整性优先于简洁性，精确性优先于友好性，可组合性优先于完整性</strong>。</p>
+<h2 id="2-设计”原子化技能”而非”完整工作流”"><a href="#2-设计”原子化技能”而非”完整工作流”" class="headerlink" title="2. 设计”原子化技能”而非”完整工作流”"></a>2. 设计”原子化技能”而非”完整工作流”</h2><p>不要试图预测用户会如何使用你的产品，也不要试图在内部做一个”小Agent”来包办一切。相反，把你的能力拆解为<strong>最小可组合单元（Atomic Skills）</strong>：</p>
+<ul>
+<li>❌ 旧思维：“预订会议室”是一个完整功能，包含查空闲、选时间、订会议室、发邀请，用户必须按照你预设的流程走</li>
+<li>✅ 新思维：拆分为 check_availability、hold_room、send_invite 等独立技能，让Agent根据用户意图动态编排</li>
+</ul>
+<p>这种**“即兴智能”（Improvisational Intelligence）**是范式转移的核心——Agent像爵士乐手一样实时协调多方的原子贡献，而非按照固定乐谱演奏。你的服务不需要理解”如何组织一场会议”，只需要诚实暴露”我能提供房间查询”和”我能锁定时段”，Agent会即兴组合。</p>
+<h2 id="3-实现渐进式交互的三层架构"><a href="#3-实现渐进式交互的三层架构" class="headerlink" title="3. 实现渐进式交互的三层架构"></a>3. 实现渐进式交互的三层架构</h2><p>为了让Agent能够安全、高效地使用你的服务，建议按照以下三层设计：</p>
+<p><strong>发现层（Discovery）</strong>：让你的服务可被Agent找到</p>
+<ul>
+<li>提供机器可读的语义描述（超越传统API的技术层面描述，纳入业务语义——比如“创建订单”应该描述为“在库存充足且用户信用达标的前提下，创建可履约的商品订单”）</li>
+<li>支持基于意图的搜索，而非关键词匹配</li>
+<li>暴露成本模型、性能特征（如“p99 &lt; 200ms”）、SLA等决策信息</li>
+</ul>
+<p><strong>契约层（Contract Parsing）</strong>：让Agent理解如何使用你</p>
+<ul>
+<li>使用<strong>语义API</strong>：不仅描述端点参数，还要显式声明业务约束（”仅工作日可处理”、”国际配送需海关编码”）、前置条件（”需先完成身份验证”）、后置效果（”库存锁定”、”触发邮件通知”）</li>
+<li>提供丰富的示例（Few-shot Examples）：展示典型调用模式和边界情况处理</li>
+<li>显式声明失败模式：区分“库存不足”、“信用拒绝”、“区域限制”，并附带建议的Agent响应策略，使Agent能够自主恢复而非简单报错</li>
+</ul>
+<p><strong>执行层（Sandboxed Execution）</strong>：让Agent安全地试错</p>
+<ul>
+<li>支持<strong>询价模式（Quote Mode）</strong>：对于涉及成本的操作，Agent可先请求”报价”而非直接执行</li>
+<li>支持<strong>空运行模式（Dry Run）</strong>：允许Agent验证理解是否正确，返回将执行的操作明细和预期结果，但不实际提交</li>
+<li>提供<strong>渐进式披露</strong>：复杂操作分阶段暴露，降低一次性理解成本</li>
+</ul>
+<h2 id="4-建立渐进式信任协议"><a href="#4-建立渐进式信任协议" class="headerlink" title="4. 建立渐进式信任协议"></a>4. 建立渐进式信任协议</h2><p>Agent与服务之间不能默认信任，需要建立**“认知谦逊”**的机制：</p>
+<ul>
+<li><strong>首次接触限制</strong>：新Agent首次使用你的服务时，仅开放低风险操作（查询类），限制高风险操作（支付、删除、数据修改）</li>
+<li><strong>信誉分积累</strong>：根据历史交互质量（成功率、响应及时性、契约遵守度）动态调整权限。好Agent获得更高配额、更低验证门槛、更优惠定价；违约行为则快速降级</li>
+<li><strong>双向澄清</strong>：关键操作前，Agent生成”执行摘要”供用户或服务方确认，避免”价格可议”这类语义歧义导致的预期错配</li>
+</ul>
+<h2 id="5-商业模式的重构：从”争夺注意力”到”满足意图”"><a href="#5-商业模式的重构：从”争夺注意力”到”满足意图”" class="headerlink" title="5. 商业模式的重构：从”争夺注意力”到”满足意图”"></a>5. 商业模式的重构：从”争夺注意力”到”满足意图”</h2><p>这是最艰难的转变。传统App通过<strong>注意力经济</strong>变现：用户停留越久，广告曝光越多，价值越大。但在Agent时代，用户可能根本不会”打开”你的App——Agent的目标是尽快、尽可能准确地满足用户意图，任何不必要的步骤都会被优化掉。</p>
+<p>你需要转向<strong>意图经济</strong>：</p>
+<ul>
+<li><strong>价值与结果挂钩</strong>：服务的价值不再与”用户在我这里花了多少时间”相关，而是与”我成功帮助用户实现了多少意图”相关</li>
+<li><strong>按贡献计费</strong>：Agent完成复杂任务时，你的服务按实际提供的价值分成，而非按展示或点击</li>
+<li><strong>成为透明的基础设施</strong>：最佳的服务是用户甚至不会意识到其存在，只是在任务完成时感受到顺畅和满意</li>
+</ul>
+<h1 id="给产品经理的行动清单"><a href="#给产品经理的行动清单" class="headerlink" title="给产品经理的行动清单"></a>给产品经理的行动清单</h1><p>如果你负责一个现有产品：</p>
+<ol>
+<li><strong>Agent兼容性审计</strong>：检查你的核心API是否已经可以被主流Agent框架调用，是否提供了机器可读的语义描述</li>
+<li><strong>原子化拆解</strong>：梳理你的功能，看看哪些是”必须按固定流程走”的，哪些可以拆分为独立可调用的能力单元</li>
+<li><strong>沙箱环境搭建</strong>：提供测试环境让Agent可以安全地试错（询价、空运行），支持试探性交互</li>
+</ol>
+<p>如果你要设计新产品：</p>
+<ol>
+<li><strong>Agent-First假设</strong>：从设计第一天起，假设用户永远不会看到你的UI，你的API契约是否足够自解释？执行”如果用户从不打开我的App，我的服务还能被使用吗？”的思想实验</li>
+<li><strong>诚实暴露边界</strong>：与其用营销话术包装能力，不如精确声明你不能做什么、在什么条件下会失败</li>
+<li><strong>参与开放生态</strong>：主动接入主流Agent平台，推动开放标准建设，防止市场过早锁定在专有生态中</li>
+</ol>
+<h1 id="结语：成为”技能”而非”应用”"><a href="#结语：成为”技能”而非”应用”" class="headerlink" title="结语：成为”技能”而非”应用”"></a>结语：成为”技能”而非”应用”</h1><p>回顾互联网历史，20世纪90年代中期，每个主要网站都试图构建自己的专属客户端软件（AOL、CompuServe），认为只有这样才能提供”最佳用户体验”。但最终，浏览器的统一界面终结了这种碎片化——Mosaic和Netscape提供了一个中立的、通用的、可扩展的访问层。</p>
+<p>今天的”每个App都在做自己的AI Agent”正是同一模式的重演。当用户需要与数十个不同的”智能助手”分别交互时，所谓的”智能”反而成为了负担的倍增器。</p>
+<p>我们正在等待的是那个能够统一访问、动态编排的”Agent浏览器”的出现。而那些率先为”被Agent理解”而非”拥有Agent”而设计的服务，将在新范式中占据类似早期网站相对于桌面软件的优势。</p>
+<p><strong>未来的用户不会说“帮我打开滴滴叫车”，而是说“帮我安排今天的出行”——至于调度了多少个后台服务，用户既不知道，也不关心。</strong></p>
+<p>你的目标不是成为用户注意力争夺战的胜利者，而是成为用户Agent首选调用的能力提供者。这就是Agent Readiness的真正含义。</p>
+<p>Kimi 作为共同作者</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/" rel="tag"># 产品经理</a>
+              <a href="/tags/%E4%BA%BA%E4%BA%BA%E9%83%BD%E6%98%AF%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/" rel="tag"># 人人都是产品经理</a>
+              <a href="/tags/agent/" rel="tag"># agent</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2026/03/11/harness-engineering/" rel="prev" title="Harness Engineering：人与AI的协作范式转变">
+      <i class="fa fa-chevron-left"></i> Harness Engineering：人与AI的协作范式转变
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%8D%E6%80%9D%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E2%80%9D%E6%8A%8AAgent%E5%81%9A%E8%BF%9B%E4%BA%A7%E5%93%81%E2%80%9D%E5%8F%AF%E8%83%BD%E6%98%AF%E9%99%B7%E9%98%B1"><span class="nav-number">1.</span> <span class="nav-text">反思：为什么”把Agent做进产品”可能是陷阱</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%9C%BA%E6%99%AF%E9%94%99%E9%85%8D%EF%BC%9A%E4%BD%A0%E7%9A%84%E7%93%B6%E9%A2%88%E7%9C%9F%E7%9A%84%E9%9C%80%E8%A6%81Agent%E5%90%97%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">1. 场景错配：你的瓶颈真的需要Agent吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E7%B3%BB%E7%BB%9F%E6%8E%92%E6%96%A5%EF%BC%9AAgent%E4%B8%8E%E9%81%97%E7%95%99%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%85%BC%E5%AE%B9%E6%80%A7%E5%8D%B1%E6%9C%BA"><span class="nav-number">1.2.</span> <span class="nav-text">2. 系统排斥：Agent与遗留系统的兼容性危机</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BD%AC%E5%90%91%EF%BC%9AAgent-Readiness-Agent-Inside"><span class="nav-number">2.</span> <span class="nav-text">转向：Agent Readiness &gt; Agent Inside</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%9E%84%E5%BB%BA%EF%BC%9AAgent%E5%8E%9F%E7%94%9F%E4%BA%A7%E5%93%81%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="nav-number">3.</span> <span class="nav-text">如何构建：Agent原生产品的设计原则</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%BB%8E%E2%80%9D%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C%E2%80%9D%E5%88%B0%E2%80%9DAgent%E4%BD%93%E9%AA%8C%E2%80%9D%EF%BC%88AX%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">1. 从”用户体验”到”Agent体验”（AX）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E8%AE%BE%E8%AE%A1%E2%80%9D%E5%8E%9F%E5%AD%90%E5%8C%96%E6%8A%80%E8%83%BD%E2%80%9D%E8%80%8C%E9%9D%9E%E2%80%9D%E5%AE%8C%E6%95%B4%E5%B7%A5%E4%BD%9C%E6%B5%81%E2%80%9D"><span class="nav-number">3.2.</span> <span class="nav-text">2. 设计”原子化技能”而非”完整工作流”</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%AE%9E%E7%8E%B0%E6%B8%90%E8%BF%9B%E5%BC%8F%E4%BA%A4%E4%BA%92%E7%9A%84%E4%B8%89%E5%B1%82%E6%9E%B6%E6%9E%84"><span class="nav-number">3.3.</span> <span class="nav-text">3. 实现渐进式交互的三层架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%BB%BA%E7%AB%8B%E6%B8%90%E8%BF%9B%E5%BC%8F%E4%BF%A1%E4%BB%BB%E5%8D%8F%E8%AE%AE"><span class="nav-number">3.4.</span> <span class="nav-text">4. 建立渐进式信任协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%95%86%E4%B8%9A%E6%A8%A1%E5%BC%8F%E7%9A%84%E9%87%8D%E6%9E%84%EF%BC%9A%E4%BB%8E%E2%80%9D%E4%BA%89%E5%A4%BA%E6%B3%A8%E6%84%8F%E5%8A%9B%E2%80%9D%E5%88%B0%E2%80%9D%E6%BB%A1%E8%B6%B3%E6%84%8F%E5%9B%BE%E2%80%9D"><span class="nav-number">3.5.</span> <span class="nav-text">5. 商业模式的重构：从”争夺注意力”到”满足意图”</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%99%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86%E7%9A%84%E8%A1%8C%E5%8A%A8%E6%B8%85%E5%8D%95"><span class="nav-number">4.</span> <span class="nav-text">给产品经理的行动清单</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD%EF%BC%9A%E6%88%90%E4%B8%BA%E2%80%9D%E6%8A%80%E8%83%BD%E2%80%9D%E8%80%8C%E9%9D%9E%E2%80%9D%E5%BA%94%E7%94%A8%E2%80%9D"><span class="nav-number">5.</span> <span class="nav-text">结语：成为”技能”而非”应用”</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Jerry Fan"
+      src="/images/avatar.svg">
+  <p class="site-author-name" itemprop="name">Jerry Fan</p>
+  <div class="site-description" itemprop="description">人是目的，不是手段</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jerry046918" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jerry046918" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:fjy046918@outlook.com" title="E-Mail → mailto:fjy046918@outlook.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.woshipm.com/u/940369" title="人人都是产品经理 → https:&#x2F;&#x2F;www.woshipm.com&#x2F;u&#x2F;940369" rel="noopener" target="_blank"><i class="fa fa-pencil-alt fa-fw"></i>人人都是产品经理</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.zhihu.com/people/fan-jia-yu-59" title="知乎 → https:&#x2F;&#x2F;www.zhihu.com&#x2F;people&#x2F;fan-jia-yu-59" rel="noopener" target="_blank"><i class="fa fa-comment fa-fw"></i>知乎</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://openclaw101.dev/" title="https:&#x2F;&#x2F;openclaw101.dev&#x2F;" rel="noopener" target="_blank">OpenClaw101</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://shitjournal.org/" title="https:&#x2F;&#x2F;shitjournal.org&#x2F;" rel="noopener" target="_blank">S.H.I.T. Journal</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jerry Fan</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
